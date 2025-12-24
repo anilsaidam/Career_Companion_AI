@@ -10,7 +10,6 @@ const generateToken = (userId) => {
 const registerUser = async (req, res) => {
   try {
     const { name, email, password, profileImageUrl } = req.body;
-
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {

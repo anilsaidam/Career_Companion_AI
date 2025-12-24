@@ -2,9 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const mongoose = require("mongoose");
+const serverless = require("serverless-http");
 require("dotenv").config();
 
-const app = express(); 
+const app = express();
 
 // Import routes and middleware
 const authRoutes = require("./routes/authRoutes");
@@ -15,7 +16,10 @@ const codingRoutes = require("./routes/codingRoutes");
 const templatesRoutes = require("./routes/templateRoutes");
 
 const { protect } = require("./middlewares/authMiddleware");
-const { generateInterviewQuestions, generateConceptExplanation } = require("./controllers/aiController");
+const {
+  generateInterviewQuestions,
+  generateConceptExplanation,
+} = require("./controllers/aiController");
 
 
 // Database connection helper with error handling
@@ -50,6 +54,18 @@ app.use(
 app.use(express.json());
 
 app.use((req, res, next) => {
+  const start = Date.now();
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.originalUrl} - ${duration}ms`);
+  });
+
+  next();
+});
+
+
+app.use((req, res, next) => {
   console.log("Incoming request:", req.method, req.originalUrl);
   next();
 });
@@ -70,7 +86,11 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Root route
 app.get("/", (req, res) => {
+<<<<<<< Updated upstream
   res.send("Career Companion AI backend is running 🚀");
+=======
+  res.send("Career Companion AI backend is running on Vercel 🚀");
+>>>>>>> Stashed changes
 });
 
 // Test route
@@ -78,8 +98,13 @@ app.get("/api/test", (req, res) => {
   res.json({ status: "success" });
 });
 
+<<<<<<< Updated upstream
 //  Render-ready: listen on environment PORT or 5000
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+=======
+module.exports = app;
+module.exports.handler = serverless(app);
+>>>>>>> Stashed changes
